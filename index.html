@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Detekcja i korekcja błędów w transmisji danych</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/toggle-switch.css" rel="stylesheet" type="text/css"/>
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+        <script src="js/angular.min.js" type="text/javascript"></script>
+        <script src="js/parity-methods.js" type="text/javascript"></script>
+        <script src="js/hamming-methods.js" type="text/javascript"></script>
+        <script src="js/crc-methods.js" type="text/javascript"></script>
+        <script src="js/methods.js" type="text/javascript"></script>
+        <script src="js/app.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div ng-app="APP" id="main-container">
+            <div ng-controller="Controller">
+                <header ng-click="reset()">
+                    Detekcja i korekcja błędów w transmisji danych
+                </header>
+                <div id="method" class="switch-field">
+                    <input type="radio" ng-model="method" ng-change="clearWhileChangingMethod()" id="method_parity" value="parity">
+                    <label for="method_parity">kontrola parzystości</label>
+                    <input type="radio" ng-model="method" ng-change="clearWhileChangingMethod()" id="method_hamming" value="hamming">
+                    <label for="method_hamming">kodowanie Hamminga</label>
+                    <input type="radio" ng-model="method" ng-change="clearWhileChangingMethod()" id="method_crc" value="crc">
+                    <label for="method_crc">CRC-16</label>
+                </div>
+                <div id="transmitter">
+                    <h2>Nadawca</h2>
+                    <table>
+                        <tr>
+                            <td class="left-column">
+                                <span>Dane wejściowe:</span>
+                            </td>
+                            <td class="right-column">
+                                <input ng-model="transmitter_random_data" 
+                                       ng-change="checkBitsNumberFromInput()"
+                                       id="random_data"
+                                       type="text" 
+                                       size="100">
+                                <button ng-click="encodeData()" 
+                                        ng-disabled="!checkBitsNumberFromInput()">
+                                    KODUJ
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column"></td>
+                            <td class="right-column">
+                                <span ng-bind="input_errors" class="incorrect"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                <span>Liczba bitów:</span>
+                            </td>
+                            <td class="right-column">
+                                <input type="number" 
+                                   ng-model="transmitter_bits_number"
+                                   ng-change="checkBitsNumber()"
+                                   class="narrow-input"
+                                   step="8" 
+                                   min="8" 
+                                   max="64">
+                                <button ng-click="generateRandomData()"
+                                        ng-disabled="!checkBitsNumber()">
+                                    WYGENERUJ
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column"></td>
+                            <td class="right-column">
+                                <span ng-bind="bits_errors" class="incorrect"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                <span>Dane zakodowane:</span>
+                            </td>
+                            <td class="right-column">
+                                <span class="span-data" ng-bind="transmitter_encoded_data"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="receiver">
+                    <h2>Odbiorca</h2>
+                    <table>
+                        <tr>
+                            <td class="left-column">
+                                <span>Dane zakodowane:</span>
+                            </td>
+                            <td class="right-column">
+                                <span ng-repeat="num in encoded_data_array track by $index"
+                                      ng-bind="num"
+                                      ng-click="manualInterference($index)"
+                                      class="span-data span-negate">
+                                </span>
+                                <button ng-click="decodeData()" 
+                                        ng-disabled="!checkBitsNumberFromInput()">
+                                    DEKODUJ
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                <span>Liczba bitów:</span>
+                            </td>
+                            <td class="right-column">
+                                <input type="number" 
+                                       ng-model="receiver_bits_number" 
+                                       class="narrow-input" 
+                                       min="1" 
+                                       max="64" >
+                                <button ng-click="interfereEncodedData()" 
+                                        ng-disabled="!checkBitsNumberFromInput()"
+                                        class="red-btn">
+                                    ZAKŁÓĆ
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                <span>Dane zakodowane po korekcji:</span>
+                            </td>
+                            <td class="right-column">
+                                <span ng-class="getClass($index)" 
+                                      ng-repeat="num in decoded_data_array track by $index" 
+                                      class="span-data" 
+                                      ng-bind="num">
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                <span>Dane wyjściowe:</span>
+                            </td>
+                            <td class="right-column">
+                                <span ng-bind="receiver_random_data" class="span-data"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="summary">
+                    <h3>Podsumowanie</h3>
+                    <table>
+                        <tr>
+                            <td class="left-column">
+                                Przesłane bity danych:
+                            </td>
+                            <td class="right-column">
+                                <span ng-bind="transferred_data_bits" style="font-weight: bold"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                Przesłane bity kontrolne:
+                            </td>
+                            <td class="right-column">
+                                <span ng-bind="redundant_data_bits" style="font-weight: bold"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                Błędy wykryte:
+                            </td>
+                            <td class="right-column">
+                                <span ng-bind="detected_errors" style="font-weight: bold"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                Błędy skorygowane:
+                            </td>
+                            <td class="right-column">
+                                <span ng-bind="fixed_errors" style="font-weight: bold"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left-column">
+                                Błędy niewykryte:
+                            </td>
+                            <td class="right-column">
+                                <span ng-bind="undetected_errors" style="font-weight: bold"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="comment">
+                    <h3>Legenda</h3>
+                    <div id="comments">
+                        <div ng-repeat="comment in comments track by $index">
+                            <span style="font-weight: bold" class="{{comment.classname}}">X</span> {{comment.meaning}}
+                        </div>
+                    </div>
+                </div>
+                <footer>
+                    Aplikacja wykonana w ramach przedmiotu 'Laboratorium teleinformatyki'<br/>
+                    Autor: <span id="authors">Magier Mateusz
+            </div>
+        </div> 
+    </body>
+</html>

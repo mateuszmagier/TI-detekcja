@@ -1,0 +1,290 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2017-04-29, 18:56:58
+    Author     : HP
+*/
+
+/* 
+    Definicje czcionek
+*/
+
+@font-face {
+    font-family: 'ubuntu-bold';
+    src: url('fonts/ubuntu_bold.ttf');
+}
+
+@font-face {
+    font-family: 'ubuntu-light';
+    src: url('fonts/ubuntu_light.ttf');
+}
+
+/* 
+    Reset i body
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'ubuntu-light';
+    background-color: #446FB3;
+    height: 100vh;
+    color: white;
+}
+
+/* 
+    Klasy rodzajów bitów
+*/
+
+span.correct { /* 0 - poprawny bit danych */
+    color: chartreuse;
+}
+
+span.incorrect { /* 1 - przekłamany bit danych */
+    color: red;
+}
+
+span.uncertain { /* 2 - niepewny bit danych */
+    color: yellow;
+}
+
+span.correct-redundant { /* 3 - poprawny bit redundantny */
+    color: aqua;
+}
+
+span.incorrect-redundant { /* 4 - przekłamany bit redundantny */
+    color: darkred;
+}
+
+span.uncertain-redundant { /* 5 - niepewny bit redundantny */
+    color: orangered;
+}
+
+span.default-type {
+    color: black;
+}
+
+/* 
+    Główny kontener aplikacji
+*/
+
+div#main-container {
+    width: 70%;
+    margin-left: 15%;
+    background-color: #35383E;
+    min-height: 100%;
+    border-left: 4px white solid;
+    border-right: 4px white solid;
+    -webkit-box-shadow: 0px 0px 72px 0px rgba(255,255,255,1);
+    -moz-box-shadow: 0px 0px 72px 0px rgba(255,255,255,1);
+    box-shadow: 0px 0px 72px 0px rgba(255,255,255,1);
+}
+
+/* 
+    Nagłówek
+*/
+
+div#main-container header {
+    width: 100%;
+    text-align: center;
+    font-family: 'ubuntu-bold';
+    font-size: 2em;
+    color: #b3bcce;
+    padding: 15px 0;
+    margin-bottom: 20px;
+    border-bottom: white 2px solid;
+    background-color: #18191c;
+}
+
+div#main-container header:hover {
+    cursor: pointer;
+    color: white;
+    transition: all ease-in .2s;
+}
+
+/* 
+    Rozmiary poszczególnych części, nagłówki części
+*/
+
+div#transmitter,
+div#receiver,
+div#summary,
+div#comment {
+    width: 80%;
+    margin-top: 20px;
+    margin-left: 10%;
+}
+
+div#comment {
+    border-bottom: none;
+}
+
+h2, h3 {
+    font-family: 'ubuntu-bold';
+    background-color: #18191c;
+    padding: 3px 20px;
+}
+
+/* 
+    Buttony
+*/
+
+button {
+    width: 100px;
+    border: none;
+    color: white;
+    background-color: #446FB3;
+    border: #446FB3 solid 1px;
+    border-radius: 8px;
+    padding: 7px 4px;
+    font-family: 'ubuntu-bold';
+    position: relative;
+    left: 7px;
+}
+
+button:hover {
+    background-color: #315182;
+    border-color: #315182;
+    cursor: pointer;
+    transition: all .1s ease-in;
+}
+
+button:disabled {
+    background-color: #969696;
+    border-color: #969696;
+}
+
+button.red-btn {
+    background-color: #b24343;
+    border: #b24343 solid 1px;
+}
+
+button.red-btn:hover {
+    background-color: #a82626;
+    border: #a82626 solid 1px;
+}
+
+button.red-btn:disabled {
+    background-color: #969696;
+    border-color: #969696;
+}
+
+/* 
+    Inputy
+*/
+
+input {
+    border: white solid 1px;
+    border-radius: 6px;
+    padding: 7px 5px;
+    background-color: #18191c;
+    font-family: "Lucida Console", Monaco, monospace;
+    color: white;
+    font-size: 1.2em;
+}
+
+input:focus {
+    background-color: black;
+    transition: all .2s ease-in;
+}
+
+input.narrow-input {
+    width: 40px;
+    text-align: center;
+    font-size: 1em;
+}
+
+.span-data {
+    font-size: 1.2em;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+table {
+    margin-top: 10px;
+}
+
+table, table tr {
+    width: 100%;
+    display: inline-block;
+}
+
+td.left-column {
+    width: 20%;
+    display: inline-block;
+    text-align: right;
+    padding-right: 10px;
+}
+
+td.right-column {
+    width: 70%;
+    display: inline-block;
+}
+
+input#random_data {
+    width: 70%;
+}
+
+div#receiver td.left-column {
+    width: 30%;
+}
+
+div#receiver td.right-column {
+    width: 65%;
+}
+
+div#receiver tr {
+    padding: 10px 0;
+}
+
+span.span-negate:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+div#summary td.left-column {
+    width: 30%;
+}
+
+div#summary td.right-column {
+    width: 55%;
+}
+
+div#summary tr {
+    margin: 3px 0;
+}
+
+div#comments {
+    margin: 15px 0 15px 30px;
+}
+
+div#comments div {
+    padding: 3px 0;
+}
+
+div#comments div span {
+    margin-right: 10px;
+    font-size: 1.5em;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+/* 
+    Stopka
+*/
+
+footer {
+    background-color: #18191c;
+    text-align: center;
+    border-top: white solid 2px;
+    padding: 5px 0;
+    font-size: 0.9em;
+}
+
+footer span#authors {
+    font-family: 'ubuntu-bold';
+}
