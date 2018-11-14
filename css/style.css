@@ -224,6 +224,7 @@ td.left-column {
 td.right-column {
     width: 70%;
     display: inline-block;
+    word-wrap: break-word;
 }
 
 input#random_data {
